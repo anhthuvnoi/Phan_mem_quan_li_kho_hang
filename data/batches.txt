@@ -1,0 +1,2 @@
+# batchId|productId|warehouseId|mfgDate|expDate|costPrice|qtyIn|qtyRemain
+B001|P001|W001|01/09/2026|01/10/2026|25000|100|100

@@ -1,0 +1,3 @@
+# id|name|unit|category|salePrice|minStock
+P001|Sua tuoi Vinamilk 1L|hop|Sua|32000|20
+P002|Mi Hao Hao|goi|Thuc pham kho|4500|100

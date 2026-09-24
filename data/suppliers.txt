@@ -1,0 +1,2 @@
+# id|name|phone|address|email|taxCode
+S001|Cong ty ABC|0905000111|Da Nang|abc@mail.com|0401234567

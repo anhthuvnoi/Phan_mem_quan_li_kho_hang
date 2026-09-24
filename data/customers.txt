@@ -1,0 +1,2 @@
+# id|name|phone|address|email|vip(0/1)
+C001|Nguyen Van A|0905111222|Hai Chau, Da Nang|a@mail.com|1

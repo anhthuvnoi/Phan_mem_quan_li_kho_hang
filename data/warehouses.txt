@@ -1,0 +1,3 @@
+# id|name|address
+W001|Kho Lien Chieu|Lien Chieu, Da Nang
+W002|Kho Hai Chau|Hai Chau, Da Nang
