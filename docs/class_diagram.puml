@@ -1,0 +1,165 @@
+@startuml class_diagram
+skinparam dpi 150
+set separator none
+skinparam defaultFontName DejaVu Sans
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam nodesep 40
+skinparam ranksep 60
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #37474F
+  ArrowColor #37474F
+  HeaderBackgroundColor #E3F2FD
+}
+skinparam class<<abstract>> {
+  HeaderBackgroundColor #FFF3E0
+}
+skinparam class<<value>> {
+  HeaderBackgroundColor #E8F5E9
+}
+title Sơ đồ lớp — Phần mềm Quản lý Kho hàng (PBL2)
+
+abstract class Entity <<abstract>> {
+  # id : string
+  # name : string
+  + getId() : string
+  + getName() : string
+  + {abstract} toString() : string
+  + {abstract} toFileString() : string
+  + {abstract} fromFileString(line : string)
+}
+
+abstract class Partner <<abstract>> {
+  # phone : string
+  # address : string
+  # email : string
+}
+
+class Supplier {
+  - taxCode : string
+}
+
+class Customer {
+  - vip : bool
+  + isVIP() : bool
+}
+
+class Product {
+  - unit : string
+  - category : string
+  - salePrice : double
+  - minStock : int
+  + setSalePrice(p : double) : bool
+}
+
+class Warehouse {
+  - address : string
+  - stock : HashTable<string, StockItem*>
+  + getOrCreateStock(productId) : StockItem*
+  + getQty(productId) : int
+}
+
+class StockItem {
+  - productId : string
+  - warehouseId : string
+  - batches : DoublyLinkedList<Batch*>
+  - fefoHeap : MinHeap<Batch*>
+  + addBatch(b : Batch*)
+  + takeFEFO(qty : int) : int
+  + getTotalQty() : int
+}
+
+class Batch <<value>> {
+  - batchId : string
+  - productId : string
+  - mfgDate : Date
+  - expDate : Date
+  - costPrice : double
+  - qtyIn : int
+  - qtyRemain : int
+  + take(qty : int) : int
+  + isExpired(today : Date) : bool
+  + operator<(other : Batch) : bool
+}
+
+class Date <<value>> {
+  - day, month, year : int
+  + toDayIndex() : int
+  + operator<(other : Date) : bool
+  + operator-(other : Date) : int
+}
+
+abstract class Receipt <<abstract>> {
+  # id : string
+  # date : Date
+  # lines : DoublyLinkedList<ReceiptLine>
+  + total() : double
+  + {abstract} apply(inv : InventoryService&) : bool
+  + {abstract} getType() : string
+}
+
+class ImportReceipt {
+  - supplierId : string
+  - warehouseId : string
+  + apply(inv) : bool
+}
+
+class ExportReceipt {
+  - customerId : string
+  - warehouseId : string
+  + apply(inv) : bool
+}
+
+class TransferReceipt {
+  - fromWarehouseId : string
+  - toWarehouseId : string
+  + apply(inv) : bool
+}
+
+class ReceiptLine <<value>> {
+  - productId : string
+  - batchId : string
+  - qty : int
+  - unitPrice : double
+  + lineTotal() : double
+}
+
+class Order {
+  - orderId : string
+  - customerId : string
+  - urgent : bool
+  - status : OrderStatus
+  - lines : DoublyLinkedList<ReceiptLine>
+}
+
+' --- Kế thừa ---
+Entity <|-- Partner
+Entity <|-- Product
+Entity <|-- Warehouse
+Partner <|-- Supplier
+Partner <|-- Customer
+Receipt <|-- ImportReceipt
+Receipt <|-- ExportReceipt
+Receipt <|-- TransferReceipt
+
+' --- Thành phần / tập hợp ---
+Warehouse "1" *-- "0..*" StockItem : stock
+StockItem "1" o-- "0..*" Batch : batches / fefoHeap
+Receipt "1" *-- "1..*" ReceiptLine : lines
+Order "1" *-- "1..*" ReceiptLine : lines
+Batch *-- Date : mfgDate, expDate
+
+' --- Tham chiếu theo mã ---
+StockItem ..> Product : productId
+
+legend right
+  |= Ký hiệu |= Ý nghĩa |
+  | <color:#37474F>—▷</color> | Kế thừa |
+  | <color:#37474F>◆—</color> | Thành phần (chứa, sở hữu) |
+  | <color:#37474F>◇—</color> | Tập hợp (tham chiếu) |
+  | <color:#37474F>- - ></color> | Phụ thuộc / tham chiếu theo mã |
+  | cam | Lớp trừu tượng |
+  | xanh lá | Lớp giá trị |
+endlegend
+@enduml

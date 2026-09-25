@@ -1,0 +1,82 @@
+@startuml architecture
+skinparam dpi 150
+skinparam defaultFontName DejaVu Sans
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam nodesep 30
+skinparam ranksep 50
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #37474F
+  ArrowColor #37474F
+}
+skinparam package {
+  BorderColor #90A4AE
+  FontStyle bold
+}
+hide empty members
+set separator none
+title Kiến trúc phân tầng — Services và Cấu trúc dữ liệu
+
+package "Tầng 4 — Giao diện (ui/, main.cpp)" #F3E5F5 {
+  class "CLI / GUI (raylib)" as UI
+}
+
+package "Tầng 3 — Nghiệp vụ (services/)" #E3F2FD {
+  class WarehouseSystem <<facade>> {
+    + load() : Result
+    + save() : Result
+  }
+  class Catalog
+  class InventoryService {
+    + processReceipt(r : Receipt*) : Result
+    + suggestSourceWarehouse(productId) : string
+  }
+  class OrderService {
+    + enqueue(o : Order*)
+    + processNext() : Result
+  }
+  class SearchService {
+    + suggestByName(prefix) : int
+    + filterByPrice(low, high) : int
+  }
+  class AlertService {
+    + nearExpiry(today, days) : int
+  }
+  class ReportService {
+    + revenueBetween(from, to) : double
+  }
+  class FileManager
+  class Logger
+}
+
+package "Tầng 1 — Cấu trúc dữ liệu tự cài đặt (ds/)" #E8F5E9 {
+  class "HashTable<K,V>" as HT
+  class "DoublyLinkedList<T>" as DLL
+  class "MinHeap<T>" as MinH
+  class "MaxHeap<T>" as MaxH
+  class "Deque<T>" as DQ
+  class "Trie" as TR
+  class "BST<K,V>" as BST
+  class "FenwickTree" as FW
+}
+
+UI --> WarehouseSystem : chỉ gọi qua facade
+WarehouseSystem *-- Catalog
+WarehouseSystem *-- InventoryService
+WarehouseSystem *-- OrderService
+WarehouseSystem *-- SearchService
+WarehouseSystem *-- AlertService
+WarehouseSystem *-- ReportService
+WarehouseSystem *-- FileManager
+WarehouseSystem *-- Logger
+
+Catalog --> HT : danh mục (tra O(1))
+InventoryService --> DLL : lịch sử phiếu
+InventoryService --> MaxH : gợi ý kho nguồn
+OrderService --> DQ : đơn VIP lên đầu
+SearchService --> TR : gợi ý tên
+SearchService --> BST : lọc khoảng giá/tồn
+AlertService --> MinH : lô cận hạn
+ReportService --> FW : doanh thu theo ngày
+@enduml
