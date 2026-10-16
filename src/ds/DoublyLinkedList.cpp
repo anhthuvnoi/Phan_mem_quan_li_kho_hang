@@ -1,13 +1,8 @@
 #include "ds/DoublyLinkedList.h"
+using namespace std;
 #include <stdexcept>
-#include <string>
-
-// Cài đặt DoublyLinkedList<T>. Vì thân hàm template nằm ở .cpp, cuối file phải
-// "khai báo tường minh" (explicit instantiation) các kiểu T mà dự án dùng.
-
 template <typename T>
 DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr), count(0) {}
-
 template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList() {
     clear();

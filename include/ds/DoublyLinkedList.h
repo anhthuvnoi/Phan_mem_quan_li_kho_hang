@@ -33,5 +33,5 @@ public:
     void clear();
     void forEach(void (*visit)(const T& value, void* ctx), void* ctx) const;   // duyệt từ đầu đến cuối
 };
-
+#include "../../src/ds/DoublyLinkedList.cpp"
 #endif // DS_DOUBLYLINKEDLIST_H

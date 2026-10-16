@@ -5,3 +5,7 @@ build/
 .vscode/
 .idea/
 data/log.txt
+<<<<<<< HEAD
+=======
+test/*
+>>>>>>> 815d286 (up files)

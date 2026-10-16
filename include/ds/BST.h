@@ -17,6 +17,10 @@ private:
     int count;
 
     void destroy(Node* node);
+    Node* insertHelper(Node* node, const K& key, const V& value);
+    Node* removeHelper(Node* node, const K& key, const V& value, bool& removed);
+    Node* findMin(Node* node) const;
+    void rangeQueryHelper(Node* node, const K& low, const K& high, V results[], int maxResults, int& currentCount) const;
 
 public:
     BST();
@@ -27,6 +31,7 @@ public:
     // Lấy các value có key trong [low, high], trả về số phần tử
     int rangeQuery(const K& low, const K& high, V results[], int maxResults) const;
     int size() const;
+    bool empty() const { return count == 0; }
 };
-
+#include "../../src/ds/BST.cpp"
 #endif // DS_BST_H

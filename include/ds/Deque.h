@@ -24,5 +24,5 @@ public:
     int size() const;
     bool empty() const;
 };
-
+#include "../../src/ds/Deque.cpp"
 #endif // DS_DEQUE_H
