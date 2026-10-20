@@ -1,20 +1,38 @@
-#ifndef DS_FENWICKTREE_H
-#define DS_FENWICKTREE_H
+#ifndef DS_MINHEAP_H
+#define DS_MINHEAP_H
 
-// Cây Fenwick (BIT) — dùng cho: tổng doanh thu theo khoảng ngày
-// Chỉ số = số ngày tính từ mốc (Date::toDayIndex)
-class FenwickTree {
+// Min-Heap — dùng cho: xuất kho FEFO (lô hết hạn sớm nhất), cảnh báo cận date
+#include <stdexcept>
+#include "ds/Compare.h"
+
+template <typename T, typename Compare = DefaultLess<T>>
+class MinHeap {
 private:
-    double* tree;
-    int n;
+    T* data;
+    int capacity;
+    int count;
+    Compare cmp;
+
+    void siftUp(int i);
+    void siftDown(int i);
+    void resize();
+    void swapAt(int i, int j);
 
 public:
-    FenwickTree(int size);
-    ~FenwickTree();
+    MinHeap(int cap = 16);
+    MinHeap(const MinHeap& other);
+    MinHeap& operator=(const MinHeap& other);
+    ~MinHeap();
 
-    void add(int index, double delta);        // cộng doanh thu vào ngày index
-    double prefixSum(int index) const;        // tổng [1..index]
-    double rangeSum(int left, int right) const;
+    void push(const T& value);
+    void pop();                       
+    T& top();                        
+    const T& top() const;
+    int size() const;
+    bool empty() const;
+    void clear();
 };
 
-#endif // DS_FENWICKTREE_H
+#include "ds/MinHeap.cpp"
+
+#endif // DS_MINHEAP_H
