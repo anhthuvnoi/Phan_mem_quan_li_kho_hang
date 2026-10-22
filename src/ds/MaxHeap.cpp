@@ -1,48 +1,22 @@
-#ifndef DS_MAXHEAP_CPP
-#define DS_MAXHEAP_CPP
-
 #include "ds/MaxHeap.h"
+#include <stdexcept>
+#include <string>
+#include <utility>
 
-template <typename T, typename Compare>
-MaxHeap<T, Compare>::MaxHeap(int cap)
-    : data(nullptr), capacity(cap > 0 ? cap : 1), count(0), cmp() {
+// Giống MinHeap nhưng đỉnh là phần tử LỚN nhất (so sánh bằng operator< của T)
+
+template <typename T>
+MaxHeap<T>::MaxHeap(int cap) : data(nullptr), capacity(cap > 0 ? cap : 1), count(0) {
     data = new T[capacity];
 }
 
-template <typename T, typename Compare>
-MaxHeap<T, Compare>::MaxHeap(const MaxHeap& other)
-    : data(new T[other.capacity]), capacity(other.capacity), count(other.count), cmp(other.cmp) {
-    for (int i = 0; i < count; i++) data[i] = other.data[i];
-}
-
-template <typename T, typename Compare>
-MaxHeap<T, Compare>& MaxHeap<T, Compare>::operator=(const MaxHeap& other) {
-    if (this != &other) {
-        T* newData = new T[other.capacity];
-        for (int i = 0; i < other.count; i++) newData[i] = other.data[i];
-        delete[] data;
-        data = newData;
-        capacity = other.capacity;
-        count = other.count;
-        cmp = other.cmp;
-    }
-    return *this;
-}
-
-template <typename T, typename Compare>
-MaxHeap<T, Compare>::~MaxHeap() {
+template <typename T>
+MaxHeap<T>::~MaxHeap() {
     delete[] data;
 }
 
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::swapAt(int i, int j) {
-    T tmp = data[i];
-    data[i] = data[j];
-    data[j] = tmp;
-}
-
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::resize() {
+template <typename T>
+void MaxHeap<T>::resize() {
     int newCap = capacity * 2;
     T* newData = new T[newCap];
     for (int i = 0; i < count; i++) newData[i] = data[i];
@@ -51,68 +25,62 @@ void MaxHeap<T, Compare>::resize() {
     capacity = newCap;
 }
 
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::siftUp(int i) {
+template <typename T>
+void MaxHeap<T>::siftUp(int i) {
     while (i > 0) {
         int parent = (i - 1) / 2;
-        if (cmp(data[parent], data[i])) {     
-            swapAt(i, parent);
-            i = parent;
-        } else {
-            break;
-        }
+        if (!(data[parent] < data[i])) break;      // cha đã >= con
+        T tmp = data[i];
+        data[i] = data[parent];
+        data[parent] = tmp;
+        i = parent;
     }
 }
 
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::siftDown(int i) {
+template <typename T>
+void MaxHeap<T>::siftDown(int i) {
     while (true) {
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        int largest = i;
-        if (left < count && cmp(data[largest], data[left])) largest = left;
-        if (right < count && cmp(data[largest], data[right])) largest = right;
+        int left = 2 * i + 1, right = 2 * i + 2, largest = i;
+        if (left < count && data[largest] < data[left]) largest = left;
+        if (right < count && data[largest] < data[right]) largest = right;
         if (largest == i) break;
-        swapAt(i, largest);
+        T tmp = data[i];
+        data[i] = data[largest];
+        data[largest] = tmp;
         i = largest;
     }
 }
 
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::push(const T& value) {
+template <typename T>
+void MaxHeap<T>::push(const T& value) {
     if (count == capacity) resize();
     data[count] = value;
     siftUp(count);
     count++;
 }
 
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::pop() {
+template <typename T>
+void MaxHeap<T>::pop() {
     if (count == 0) throw std::out_of_range("MaxHeap::pop: heap rong");
     data[0] = data[count - 1];
     count--;
     if (count > 0) siftDown(0);
 }
 
-template <typename T, typename Compare>
-T& MaxHeap<T, Compare>::top() {
+template <typename T>
+T& MaxHeap<T>::top() {
     if (count == 0) throw std::out_of_range("MaxHeap::top: heap rong");
     return data[0];
 }
 
-template <typename T, typename Compare>
-const T& MaxHeap<T, Compare>::top() const {
-    if (count == 0) throw std::out_of_range("MaxHeap::top: heap rong");
-    return data[0];
-}
+template <typename T>
+int MaxHeap<T>::size() const { return count; }
 
-template <typename T, typename Compare>
-int MaxHeap<T, Compare>::size() const { return count; }
+template <typename T>
+bool MaxHeap<T>::empty() const { return count == 0; }
 
-template <typename T, typename Compare>
-bool MaxHeap<T, Compare>::empty() const { return count == 0; }
-
-template <typename T, typename Compare>
-void MaxHeap<T, Compare>::clear() { count = 0; }
-
-#endif // DS_MAXHEAP_CPP
+// ---------- Các kiểu được dùng trong dự án ----------
+template class MaxHeap<int>;
+template class MaxHeap<double>;
+// InventoryService: (số lượng tồn, mã kho) -> đỉnh là kho tồn nhiều nhất
+template class MaxHeap<std::pair<int, std::string>>;
