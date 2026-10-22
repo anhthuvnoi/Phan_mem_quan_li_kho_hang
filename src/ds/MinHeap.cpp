@@ -1,44 +1,18 @@
-#ifndef DS_MINHEAP_CPP
-#define DS_MINHEAP_CPP
-
 #include "ds/MinHeap.h"
+#include <stdexcept>
+#include <string>
+
+// Mảng, gốc ở chỉ số 0: cha(i) = (i-1)/2, con trái = 2i+1, con phải = 2i+2
+// cmp(a, b) == true nghĩa là a "nhỏ hơn" b -> đỉnh luôn là phần tử nhỏ nhất
 
 template <typename T, typename Compare>
-MinHeap<T, Compare>::MinHeap(int cap)
-    : data(nullptr), capacity(cap > 0 ? cap : 1), count(0), cmp() {
+MinHeap<T, Compare>::MinHeap(int cap) : data(nullptr), capacity(cap > 0 ? cap : 1), count(0), cmp() {
     data = new T[capacity];
-}
-
-template <typename T, typename Compare>
-MinHeap<T, Compare>::MinHeap(const MinHeap& other)
-    : data(new T[other.capacity]), capacity(other.capacity), count(other.count), cmp(other.cmp) {
-    for (int i = 0; i < count; i++) data[i] = other.data[i];
-}
-
-template <typename T, typename Compare>
-MinHeap<T, Compare>& MinHeap<T, Compare>::operator=(const MinHeap& other) {
-    if (this != &other) {
-        T* newData = new T[other.capacity];
-        for (int i = 0; i < other.count; i++) newData[i] = other.data[i];
-        delete[] data;
-        data = newData;
-        capacity = other.capacity;
-        count = other.count;
-        cmp = other.cmp;
-    }
-    return *this;
 }
 
 template <typename T, typename Compare>
 MinHeap<T, Compare>::~MinHeap() {
     delete[] data;
-}
-
-template <typename T, typename Compare>
-void MinHeap<T, Compare>::swapAt(int i, int j) {
-    T tmp = data[i];
-    data[i] = data[j];
-    data[j] = tmp;
 }
 
 template <typename T, typename Compare>
@@ -51,29 +25,30 @@ void MinHeap<T, Compare>::resize() {
     capacity = newCap;
 }
 
+// Vun lên: con nhỏ hơn cha thì đổi chỗ, lặp đến gốc
 template <typename T, typename Compare>
 void MinHeap<T, Compare>::siftUp(int i) {
     while (i > 0) {
         int parent = (i - 1) / 2;
-        if (cmp(data[i], data[parent])) {     // con nhỏ hơn cha -> đổi chỗ
-            swapAt(i, parent);
-            i = parent;
-        } else {
-            break;
-        }
+        if (!cmp(data[i], data[parent])) break;
+        T tmp = data[i];
+        data[i] = data[parent];
+        data[parent] = tmp;
+        i = parent;
     }
 }
 
+// Vun xuống: đổi với con nhỏ hơn cho đến khi nhỏ hơn cả hai con
 template <typename T, typename Compare>
 void MinHeap<T, Compare>::siftDown(int i) {
     while (true) {
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        int smallest = i;
+        int left = 2 * i + 1, right = 2 * i + 2, smallest = i;
         if (left < count && cmp(data[left], data[smallest])) smallest = left;
         if (right < count && cmp(data[right], data[smallest])) smallest = right;
         if (smallest == i) break;
-        swapAt(i, smallest);
+        T tmp = data[i];
+        data[i] = data[smallest];
+        data[smallest] = tmp;
         i = smallest;
     }
 }
@@ -89,7 +64,7 @@ void MinHeap<T, Compare>::push(const T& value) {
 template <typename T, typename Compare>
 void MinHeap<T, Compare>::pop() {
     if (count == 0) throw std::out_of_range("MinHeap::pop: heap rong");
-    data[0] = data[count - 1];
+    data[0] = data[count - 1];       // đưa phần tử cuối lên gốc rồi vun xuống
     count--;
     if (count > 0) siftDown(0);
 }
@@ -101,18 +76,14 @@ T& MinHeap<T, Compare>::top() {
 }
 
 template <typename T, typename Compare>
-const T& MinHeap<T, Compare>::top() const {
-    if (count == 0) throw std::out_of_range("MinHeap::top: heap rong");
-    return data[0];
-}
-
-template <typename T, typename Compare>
 int MinHeap<T, Compare>::size() const { return count; }
 
 template <typename T, typename Compare>
 bool MinHeap<T, Compare>::empty() const { return count == 0; }
 
-template <typename T, typename Compare>
-void MinHeap<T, Compare>::clear() { count = 0; }
+// ---------- Các kiểu được dùng trong dự án ----------
+#include "models/Batch.h"
 
-#endif // DS_MINHEAP_CPP
+template class MinHeap<int>;
+template class MinHeap<double>;
+template class MinHeap<Batch*, BatchPtrLess>;     // StockItem (FEFO), AlertService (cận date)
