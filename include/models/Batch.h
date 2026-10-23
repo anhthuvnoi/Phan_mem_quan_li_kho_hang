@@ -27,7 +27,7 @@ public:
     Date getMfgDate() const;
     Date getExpDate() const;
     double getCostPrice() const;
-    int getQtyIn() const;
+    int getQtyIn() const; //qty: quantity
     int getQtyRemain() const;
 
     int take(int qty);                        // lấy tối đa qty, trả về số thực lấy được

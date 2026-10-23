@@ -27,11 +27,11 @@ public:
     bool remove(const T& value);
     T& front();
     T& back();
-    T& at(int index);
+    T& at(int index) const;
     int size() const;
     bool empty() const;
     void clear();
     void forEach(void (*visit)(const T& value, void* ctx), void* ctx) const;   // duyệt từ đầu đến cuối
 };
-
+#include "../../src/ds/DoublyLinkedList.cpp"
 #endif // DS_DOUBLYLINKEDLIST_H

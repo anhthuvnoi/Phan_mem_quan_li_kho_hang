@@ -3,6 +3,7 @@
 
 // Cây tiền tố — dùng cho: gợi ý tên mặt hàng (autocomplete)
 #include <string>
+using namespace std;
 
 class Trie {
 private:
@@ -10,20 +11,24 @@ private:
     struct Node {
         Node* children[ALPHABET];
         bool isEnd;
-        std::string productId;
+        string productId;
         Node();
     };
     Node* root;
     void destroy(Node* node);
 
+    bool hasChildren(Node* node) const;
+    bool removeHelper(Node* node, const string& name, size_t depth, bool& removed);
+    void suggestHelper(Node* node, string result[], int maxResult, int& count) const;
+
 public:
     Trie();
     ~Trie();
 
-    void insert(const std::string& name, const std::string& productId);
-    bool remove(const std::string& name);
+    void insert(const string& name, const string& productId);
+    bool remove(const string& name);
     // Trả về tối đa maxResults productId có tên bắt đầu bằng prefix
-    int suggest(const std::string& prefix, std::string results[], int maxResults) const;
+    int suggest(const string& prefix, string results[], int maxResults) const;
 };
 
 #endif // DS_TRIE_H

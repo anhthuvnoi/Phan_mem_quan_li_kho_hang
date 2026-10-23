@@ -1,13 +1,8 @@
 #include "ds/DoublyLinkedList.h"
+using namespace std;
 #include <stdexcept>
-#include <string>
-
-// Cài đặt DoublyLinkedList<T>. Vì thân hàm template nằm ở .cpp, cuối file phải
-// "khai báo tường minh" (explicit instantiation) các kiểu T mà dự án dùng.
-
 template <typename T>
 DoublyLinkedList<T>::DoublyLinkedList() : head(nullptr), tail(nullptr), count(0) {}
-
 template <typename T>
 DoublyLinkedList<T>::~DoublyLinkedList() {
     clear();
@@ -86,7 +81,7 @@ T& DoublyLinkedList<T>::back() {
 
 // Đi từ đầu gần hơn: nửa đầu đi từ head, nửa sau đi lùi từ tail
 template <typename T>
-T& DoublyLinkedList<T>::at(int index) {
+T& DoublyLinkedList<T>::at(int index) const {
     if (index < 0 || index >= count) throw std::out_of_range("DoublyLinkedList::at: chi so khong hop le");
     Node* p;
     if (index < count / 2) {
