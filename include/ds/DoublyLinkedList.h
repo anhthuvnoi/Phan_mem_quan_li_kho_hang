@@ -27,7 +27,7 @@ public:
     bool remove(const T& value);
     T& front();
     T& back();
-    T& at(int index);
+    T& at(int index) const;
     int size() const;
     bool empty() const;
     void clear();

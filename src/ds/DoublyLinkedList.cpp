@@ -81,7 +81,7 @@ T& DoublyLinkedList<T>::back() {
 
 // Đi từ đầu gần hơn: nửa đầu đi từ head, nửa sau đi lùi từ tail
 template <typename T>
-T& DoublyLinkedList<T>::at(int index) {
+T& DoublyLinkedList<T>::at(int index) const {
     if (index < 0 || index >= count) throw std::out_of_range("DoublyLinkedList::at: chi so khong hop le");
     Node* p;
     if (index < count / 2) {
